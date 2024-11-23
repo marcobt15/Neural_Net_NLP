@@ -18,20 +18,43 @@ class bag_of_words_model:
     self.vocabulary = list(words_map.keys())
     self.vocabulary.sort()
 
+    print(f"vocab {self.vocabulary}")
+
     self.idf = []
     for word in self.vocabulary:
       word_freq = words_map[word]
       idf_val = math.log(document_count/word_freq, 2)
       self.idf.append(idf_val)
-    
-    # Return nothing
 
 
   def tf_idf(self, document_filepath):
     # document_filepath is the full file path to a test document
-
     # Return the term frequency-inverse document frequency vector for the document
+    
+    with open(document_filepath, 'r') as file:
+        doc = file.read()
+        words = doc.split(" ")
+    
+    count_vector = []
+    for word in self.vocabulary:
+      count_vector.append(self.count_based_occurance(word, doc))
+      
+    term_frequency = []
+    for x in count_vector:
+      term_frequency.append(x / len(words))
+    
+    tf_idf_vector = [x * y for x, y in zip(term_frequency, self.idf)]
+    
+    #testing
+    #print(f"doc: {doc}")
+    #print(f"count frequency {count_vector}")
+    #print(f"term frquency {term_frequency}\n")
+    #print(f"tf idf {tf_idf_vector}\n")
+
     return tf_idf_vector
+
+  def count_based_occurance(self, word, doc):
+    return doc.split().count(word)
 
 
   def predict(self, document_filepath, weights):
@@ -39,6 +62,7 @@ class bag_of_words_model:
     # weights is a list of weights for the artificial neuron
 
     # Return the prediction from the neural network model
-    return prediction
+    return #prediction
   
-bag_of_words_model("Examples\\Example0\\training_documents")
+model = bag_of_words_model("Examples\\Example0\\training_documents")
+model.tf_idf("Examples\\Example0\\test_document.txt")
